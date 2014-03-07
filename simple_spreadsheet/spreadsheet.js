@@ -1608,61 +1608,7 @@ function graph2(type,title,data,data2,keys,xtitle,ytitle,width,height) {
   }
   return url;
 }
-/*
-function param2(str) {
-  if (str.join) str = str.join(",");
-  if (str.replace) return escape(str.replace(/,/g,"|"));
-  return str;
-}
-function graph(type,title,data,keys,xtitle,ytitle,width,height) {
-  if (type=="line") type = "lc";
-    else if (type=="pie") type = "p3";
-    else if (type=="bar") type = "bvg";
-    else if (type=="scatter") type = "s";
-// Check: linesteps, 
 
-  var url = "img:http://chart.apis.google.com/chart?cht="+param(type)+"&chtt="+param(title);
-  if (type!="s") {
-	url += "&chd=t:"+param(data)+"&chl="+param2(keys);
-    url += "&chds="+min(data)+","+max(data);
-    url += "&chm=N*f0*,0000FF,0,-1,11";
-  } else {
-    url += "&chxt=x,y&chd=t:"+param(keys)+"|"+param(data);
-  }
-  /* Check: map
-  if (typeof xtitle != "undefined") {
-    url += "&xtitle="+param(xtitle);
-  }
-  if (typeof ytitle != "undefined") {
-    url += "&ytitle="+param(ytitle);
-  }
-  if (typeof(width)!= "undefined" && typeof(height)!= "undefined") {
-    url += "&chs="+width+"x"+height;
-  } else url += "&chs=300x125";
-  return url+"&.png";
-}
-
-function graph2(type,title,data,data2,keys,xtitle,ytitle,width,height) {
-  if (type=="bar") type = "bvg";
-    else if (type=="baraccumulate") type = "bvs";
-    else if (type=="bar") type = "bvg";
-    else if (type=="scatter") type = "s";
-// Check linesteps, line
-
-  var url = "img:http://chart.apis.google.com/chart?cht="+param(type)+"&chtt="+param(title);
-  url += "&chd=t:"+param(data)+"|"+param(data2)+"&chl="+param2(keys);
-  if (typeof xtitle != "undefined") {
-    url += "&xtitle="+param(xtitle);
-  }
-  if (typeof ytitle != "undefined") {
-    url += "&ytitle="+param(ytitle);
-  }
-  if (typeof(width)!= "undefined" && typeof(height)!= "undefined") {
-    url += "&chs="+width+"x"+height;
-  } else url += "&chs=300x125";
-  return url;
-}
-  */
 function sum(arr) {
   var result = 0;
   for (var i=0; i<arr.length; i++) result += arr[i]*1;
