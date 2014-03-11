@@ -589,7 +589,12 @@ function load(code) {
   var rows = sys.rows;
   var registerFuncs = "";
   var dbCells = [];
-  if (code.indexOf("dbCells")==-1) {
+  //See if the code is XML (Grapher) 
+  if(code.indexOf("<graph>") != -1) 
+  {
+	loadXML(code); //Send to XML-parsing function
+  }
+  else if (code.indexOf("dbCells")==-1) {
     if (code.indexOf(sys.tab)==-1) sys.cells = loadCSV(code); else sys.cells = loadTSV(code);
 	if (!sys.cells) return;
   } else {
@@ -632,6 +637,62 @@ function cancelLoad() {
   sys.getObj("source").style.display = "none";
   sys.getObj("data").style.display = "inline";
   display();
+}
+
+//Loads Grapher-XML code into the spreadsheet 
+function loadXML(code) {
+	//XML CODE HANDLING HERE
+	var newCode = "dbCells = [";
+	var x = 0; 
+	var y = 0; 
+	//Set up XML Parser 
+	if (window.DOMParser)
+	{
+		parser=new DOMParser();
+		xmlStr=parser.parseFromString(code,"text/xml");
+	}
+	else // Internet Explorer
+	{
+		xmlStr=new ActiveXObject("Microsoft.XMLDOM");
+		xmlStr.async=false;
+		xmlStr.loadXML(code); 
+	}
+	//Collect all Nodes
+	var nodes = xmlStr.getElementsByTagName("node"); 
+	//Cycle through the nodes, collecting all information 
+	for(var i=0; i<nodes.length; i++) 
+	{
+		x = 0;
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('id')+"\",\"\"],";   //Store the id as: [x,y,"id",""],  --Which is the required DB format 
+		x++;
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('x')+"\",\"\"],";	//Continue using format as listed above in comment
+		x++;
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
+		x++;
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('color')+"\",\"\"],";
+		x++;
+		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
+		x++;
+		//Gather up all edges for this node
+		var edges = nodes[i].childNodes;
+		/*
+		var connections = "";  //Stores the string of all the edges
+		//Cycle through the edges collecting them into a string 
+		//and then add them to one column, comma delimited -- [x,y, "edge1,edge2,edge3....",""],
+		if(edges[0])
+			connections = edges[0].getAttribute('to');
+		for(var k=1; k<edges.length; k++)
+		{
+			connections += ","+edges[i].getAttribute('to');
+		}
+		newCode += "\n["+x+","+y+","+"\""+connections+"\",\"\"],";
+		y++;  //Move to next row on spreadsheet 
+		*/
+	}
+	newCode += "\n];";
+	//alert(edges[0].getAttribute('to'));
+	alert(newCode);
+	return load(newCode);
 }
 function loadCSV(code) {
   code = code.replace(/([^,])""([^,])/g,"$1#quot#$2").replace(/\r/g,"");
