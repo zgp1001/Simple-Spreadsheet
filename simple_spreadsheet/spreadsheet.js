@@ -744,14 +744,35 @@ function save(format) {
   sys.active = "code";
   sys.getObj("status").innerHTML = "";
   var out = "";
-  if (format == "csv") out = cellsToCSV();
+ /* if (format == "csv") out = cellsToCSV();
     else if (format == "tsv") out = cellsToTSV();
-	else out = cellsToJS();
+	else out = cellsToJS();*/
+   out = cellsToGrapher();
   sys.getObj("data").style.display = "none";
   sys.getObj("source").style.display = "inline";
   sys.getObj("code").value = out;
 }
-
+//Save Grapher code and any changes made to send back to the user
+function cellsToGrapher()
+{
+	//sys.cells[rows][cols][3 = info inside cells]
+	var out = "<graph> \n"
+	for (var i =0; i < sys.cells.length; i++) {
+		out += "<node id=\""+sys.cells[i][0][3]+"\"";  //gets the id
+		out += " x=\""+sys.cells[i][1][3]+"\"";        //gets the x-coordinate for the node
+		out += " y=\""+sys.cells[i][2][3]+"\"";        //gets the y-coordinate for the node
+		out += " color=\""+sys.cells[i][3][3]+"\"";    //gets the color for the node
+		out += " label=\""+sys.cells[i][4][3]+"\"> \n"; //gets the label for the node
+		tempString = sys.cells[i][5][3]; //get the comma delimted string of edges for the graph
+		edges = tempString.split(","); //split the string for each edge that is needed
+		for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
+			out += "<edge to=\""+edges[j]+"\" /> \n";
+		}
+		out += "</node> \n";
+	}
+	out += "</graph>";
+	return out;
+}
 function cellsToJS() {
   var out = "";
   out += "dbCells = [\n";
