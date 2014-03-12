@@ -29,6 +29,8 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("msie")!=-1) agent = "msie";
 
 window.onerror=handleErr;
+
+var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges");
   
 if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
   document.onkeydown = keypress;
@@ -1553,7 +1555,10 @@ function buildColName(num) {
     val = (Math.floor(num/26)-1)%26;
 	result += String.fromCharCode(val+65);
   }
-  result += String.fromCharCode(num%26+65);
+  if(num <= colNames.length-1)
+	result += colNames[num];
+  else 
+	result += String.fromCharCode(num%26+65);
   return result;
 }
 //convert AA to 26
