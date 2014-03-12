@@ -674,24 +674,20 @@ function loadXML(code) {
 		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
 		x++;
 		//Gather up all edges for this node
-		var edges = nodes[i].childNodes;
-		/*
+		var edges = nodes[i].getElementsByTagName("edge");
 		var connections = "";  //Stores the string of all the edges
-		//Cycle through the edges collecting them into a string 
-		//and then add them to one column, comma delimited -- [x,y, "edge1,edge2,edge3....",""],
+		//Cycle through all the edges and store them into a string with commas separating each edge
 		if(edges[0])
 			connections = edges[0].getAttribute('to');
 		for(var k=1; k<edges.length; k++)
 		{
-			connections += ","+edges[i].getAttribute('to');
+			connections += ","+edges[k].getAttribute('to');  
 		}
-		newCode += "\n["+x+","+y+","+"\""+connections+"\",\"\"],";
+		newCode += "\n["+x+","+y+","+"\""+connections+"\",\"\"],"; 	//Places the edge string into the spreadsheet
 		y++;  //Move to next row on spreadsheet 
-		*/
 	}
 	newCode += "\n];";
-	//alert(edges[0].getAttribute('to'));
-	alert(newCode);
+	//alert(newCode);
 	return load(newCode);
 }
 function loadCSV(code) {
