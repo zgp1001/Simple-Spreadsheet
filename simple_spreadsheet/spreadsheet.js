@@ -472,6 +472,8 @@ function display() {
 	}
   }
   sys.getObj("focus").focus();
+  for(z=0; z<colorArray.length; z++)
+	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
 }
 
 function showHeaderFooter(show) {
@@ -643,8 +645,9 @@ function load(code) {
   sys.getObj("source").style.display = "none";
   sys.getObj("data").style.display = "inline";
   display();
+/*
   for(z=0; z<colorArray.length; z++)
-	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
+	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];*/
 }
 function cancelLoad() {
   sys.active = "content";
