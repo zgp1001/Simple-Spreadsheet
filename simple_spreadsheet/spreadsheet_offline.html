@@ -38,6 +38,7 @@
   }
   document.write('<script src="translations/'+lang+'.js" type="text/javascript"><'+''+'/script>');
   </script>
+  <script src="jscolor/jscolor.js" type="text/javascript"></script>
   <script src="spreadsheet.js" type="text/javascript"></script>
   <script src="json.js" type="text/javascript"></script>
 </head>
@@ -73,7 +74,15 @@ out += '<td><input type="button" value="'+trans("Load")+'" onclick="sys.loadShee
 out += '<td style="white-space:nowrap;">('+trans("Only Javascript-like syntax")+')</td>';
 out += '</tr></table>';
 document.write(out);
+
 </script>
+</div>
+<div id="picker" style="
+position:relative;
+top:90.5%;
+left:0%;">
+<b>Color Selector</b> (select a color and then double click a color square)<br>
+<input id = "colorPicker" class = "color"> 
 </div>
 </body>
 </html>

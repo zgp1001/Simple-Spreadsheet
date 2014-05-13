@@ -18,10 +18,9 @@
 	*  Foundation, Inc., 59 Temple Place - Suite 330, Boston,                  *
 	*  MA  02111-1307, USA.                                                    *
 	\**************************************************************************/
-
 // Translations implemented by Sophie Lee.
-
 var agent = navigator.userAgent.toLowerCase();
+var colorArray = new Array();
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -39,7 +38,7 @@ if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
 sys = new function() {
   this.initData = "";
   this.autoRecalc = true;
-  this.cols = 13;
+  this.cols = 6;
   this.rows = 30;
   this.row0 = 0;
   this.col0 = 0;
@@ -331,7 +330,7 @@ function display() {
   out += "<iframe src='about:blank' id='multiline'></iframe>";
   out += "<input type='text' value='' title='"+trans("Formula")+"' id='value' style='width:67%;' disabled onmouseover='previewValue();' onkeyup='previewValue();'> ";
   out += "<input type='text' title='"+trans("Style")+"' value='' id='styling' style='width:33%;' disabled onmouseover='previewValue();' onkeyup='previewValue();'> ";
-  out += "</td><td nowrap>";
+  out += "<td nowrap>";
   if (sys.isWriteable) {
     out += "&nbsp; <input type='button' value='"+trans("Save")+"' id='save' onclick='saveCell();' disabled>&nbsp;";
     out += "<input type='button' value='"+trans("X")+"' id='cancel' onclick='cancelCell();' disabled> - ";
@@ -356,6 +355,7 @@ function display() {
   // You are not allowed to remove or alter the About button and/or the copyright.
   out += "<a href='#' onclick='alert(\"Simple Spreadsheet is an open source component created by Thomas Bley\\nand licensed under GNU GPL v2.\\n\\nSimple Spreadsheet is copyright 2006-2007 by Thomas Bley.\\nTranslations implemented by Sophie Lee.\\n\\nMore information and documentation at http://www.simple-groupware.de/\\n\"); return false;'>"+trans("About")+"</a>&nbsp;";
   out += "</td></tr></table></div>";
+   
   var style = "";
   if (agent=="msie") style = "style='height:expression((document.body.clientHeight-40)+\"px\");'";
   out += "<div id='content' "+style+"><table id='table' cellspacing='0'>";
@@ -408,12 +408,21 @@ function display() {
 	  	  }
 		  value = formatValue(value,style);
 		  style = htmlEscape(formatStyle(style,value),false);
-          out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div></td>";
+		  if(col == 3){
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+			//out += "<input class = 'color {required:false}'>";
+		  }
+		  else {
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+		  }
+		  out += "</td>";
 		}
 	  } else if (sys.view=="formulas") {
-        out += "<td id='"+row+"_"+col+"' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'>"+htmlEscape(getCells(row,col,0),true)+"</td>";
+        out += "<td id='"+row+"_"+col+"' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'>"+htmlEscape(getCells(row,col,0),true);
+		out += "</td>";
 	  } else {
-        out += "<td id='"+row+"_"+col+"' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'>"+htmlEscape(getCells(row,col,1),true)+"</td>";
+        out += "<td id='"+row+"_"+col+"' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'>"+htmlEscape(getCells(row,col,1),true);
+		out += "</td>";
 	  }
     }
     out += "</tr>";
@@ -447,6 +456,7 @@ function display() {
   out += "<a href='#' onclick='save(\"tsv\"); return false;'>"+trans("TSV")+"</a>";
   out += "</div>";
   out += "<div id='status' class='status'></div>";
+  
   sys.getObj("data").innerHTML = out;
   sys.getObj("content").scrollLeft = scrollX;
   sys.getObj("content").scrollTop = scrollY;
@@ -633,6 +643,8 @@ function load(code) {
   sys.getObj("source").style.display = "none";
   sys.getObj("data").style.display = "inline";
   display();
+  for(z=0; z<colorArray.length; z++)
+	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
 }
 function cancelLoad() {
   sys.active = "content";
@@ -647,6 +659,7 @@ function loadXML(code) {
 	var newCode = "dbCells = [";
 	var x = 0; 
 	var y = 0; 
+	colorArray = new Array();
 	//Set up XML Parser 
 	if (window.DOMParser)
 	{
@@ -671,7 +684,8 @@ function loadXML(code) {
 		x++;
 		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('y')+"\",\"\"],";
 		x++;
-		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('color')+"\",\"\"],";
+		//newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('color')+"\",\"\"],";
+		colorArray[i] = nodes[i].getAttribute('color');
 		x++;
 		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('label')+"\",\"\"],";
 		x++;
@@ -754,16 +768,40 @@ function save(format) {
   sys.getObj("source").style.display = "inline";
   sys.getObj("code").value = out;
 }
+
+function rgbToHex(rgbColor) { 
+	rgbColor = rgbColor.replace("(", "");
+	rgbColor = rgbColor.replace(")", "");
+	rgbColor = rgbColor.replace("rgb", "");
+	rgbColor = rgbColor.split(",");
+	//alert("RED: "+rgbColor[0]);
+	//alert("Green: "+rgbColor[1]);
+	//alert("Blue: "+rgbColor[2]);
+	return toHex(rgbColor[0])+toHex(rgbColor[1])+toHex(rgbColor[2]);
+}
+
+function toHex(n) {
+ n = parseInt(n,10);
+ if (isNaN(n)) return "00";
+ n = Math.max(0,Math.min(n,255));
+ return "0123456789ABCDEF".charAt((n-n%16)/16)
+      + "0123456789ABCDEF".charAt(n%16);
+}
+
 //Save Grapher code and any changes made to send back to the user
 function cellsToGrapher()
 {
+	var color;
 	//sys.cells[rows][cols][3 = info inside cells]
 	var out = "<graph> \n"
 	for (var i =0; i < sys.cells.length; i++) {
 		out += "<node id=\""+sys.cells[i][0][3]+"\"";  //gets the id
 		out += " x=\""+sys.cells[i][1][3]+"\"";        //gets the x-coordinate for the node
 		out += " y=\""+sys.cells[i][2][3]+"\"";        //gets the y-coordinate for the node
-		out += " color=\""+sys.cells[i][3][3]+"\"";    //gets the color for the node
+		color = document.getElementById(i+"_"+3).childNodes[0].style.backgroundColor;
+		color = rgbToHex(color);
+		out += " color =\"#"+color+"\"";
+		//out += " color=\""+sys.cells[i][3][3]+"\"";    //gets the color for the node
 		out += " label=\""+sys.cells[i][4][3]+"\"> \n"; //gets the label for the node
 		tempString = sys.cells[i][5][3]; //get the comma delimted string of edges for the graph
 		edges = tempString.split(","); //split the string for each edge that is needed
@@ -1359,33 +1397,39 @@ function gotoCell(pos) {
 }
 function editCell(row,col,keyCode) {
   sys.active = "content";
-  if (!sys.isWriteable) return;
-  if (!sys.getObj("styling").disabled) cancelCell();
-  
-  highlightCell(row,col,"cell_highlight");
-  highlightCellHeader(row,col);
-  sys.currRow = row;
-  sys.currCol = col;
-  
-  if (isWritable(getCellsR(row,col,1))) {
-    sys.getObj("value").disabled = false;
+  if(col == 3)  //Call JSColor for color picking
+  {
+	document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = document.getElementById("colorPicker").value; //DOM MAGIC!!!
   }
-  sys.getObj("styling").disabled = false;
-  sys.getObj("save").disabled = false;
-  sys.getObj("cancel").disabled = false;
-  if (sys.getObj("cols")) sys.getObj("cols").disabled = true;
-  if (sys.getObj("rows")) sys.getObj("rows").disabled = true;
-  sys.getObj("field").disabled = true;
-  sys.getObj("styling").value = getCellsR(row,col,1);
-  if (keyCode > 32 && agent=="firefox" && !sys.getObj("value").disabled) {
-  	sys.getObj("value").value = String.fromCharCode(keyCode);
-  } else {
-    sys.getObj("value").value = getCellsR(row,col,0);
-  }
-  if (!sys.getObj("value").disabled) {
-    sys.getObj("value").focus(); 
-  } else {
-    sys.getObj("styling").focus(); 
+  else{
+	if (!sys.isWriteable) return;
+	if (!sys.getObj("styling").disabled) cancelCell();
+	  
+	highlightCell(row,col,"cell_highlight");
+	highlightCellHeader(row,col);
+	sys.currRow = row;
+	sys.currCol = col;
+	  
+	if (isWritable(getCellsR(row,col,1))) {
+		sys.getObj("value").disabled = false;
+	}
+	sys.getObj("styling").disabled = false;
+	sys.getObj("save").disabled = false;
+	sys.getObj("cancel").disabled = false;
+	if (sys.getObj("cols")) sys.getObj("cols").disabled = true;
+	if (sys.getObj("rows")) sys.getObj("rows").disabled = true;
+	sys.getObj("field").disabled = true;
+	sys.getObj("styling").value = getCellsR(row,col,1);
+	if (keyCode > 32 && agent=="firefox" && !sys.getObj("value").disabled) {
+		sys.getObj("value").value = String.fromCharCode(keyCode);
+	} else {
+		sys.getObj("value").value = getCellsR(row,col,0);
+	}
+	if (!sys.getObj("value").disabled) {
+		sys.getObj("value").focus(); 
+	} else {
+		sys.getObj("styling").focus(); 
+	}
   }
 }
 function copyCell(row,col,cRow,cCol) {
