@@ -449,11 +449,11 @@ function display() {
     out += "<a href='#' onclick='cutcopy(\"copy\",\"#DDDDFF\"); return false;' title='Alt-c' accesskey='c'>"+trans("Copy")+"</a> - ";
     out += "<a href='#' onclick='paste(); return false;' title='Alt-v' accesskey='v'>"+trans("Paste")+"</a> - ";
     out += "<a href='#' onclick='if (confirm(\""+trans("Really empty cell(s) ?")+"\")) removeSelectedCell(); return false;' title='Alt-e' accesskey='e'>"+trans("Empty")+"</a> - ";
-  }
+  }/*
   out += trans("Export")+": ";
   out += "<a href='#' onclick='save(\"js\"); return false;'>"+trans("JS")+"</a> - ";
   out += "<a href='#' onclick='save(\"csv\"); return false;'>"+trans("CSV")+"</a> - ";
-  out += "<a href='#' onclick='save(\"tsv\"); return false;'>"+trans("TSV")+"</a>";
+  out += "<a href='#' onclick='save(\"tsv\"); return false;'>"+trans("TSV")+"</a>"; */
   out += "</div>";
   out += "<div id='status' class='status'></div>";
   
@@ -645,9 +645,6 @@ function load(code) {
   sys.getObj("source").style.display = "none";
   sys.getObj("data").style.display = "inline";
   display();
-/*
-  for(z=0; z<colorArray.length; z++)
-	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];*/
 }
 function cancelLoad() {
   sys.active = "content";
@@ -766,7 +763,7 @@ function save(format) {
  /* if (format == "csv") out = cellsToCSV();
     else if (format == "tsv") out = cellsToTSV();
 	else out = cellsToJS();*/
-   out = cellsToGrapher();
+  out = cellsToGrapher();
   sys.getObj("data").style.display = "none";
   sys.getObj("source").style.display = "inline";
   sys.getObj("code").value = out;
@@ -816,6 +813,8 @@ function cellsToGrapher()
 	out += "</graph>";
 	return out;
 }
+
+/*
 function cellsToJS() {
   var out = "";
   out += "dbCells = [\n";
@@ -889,6 +888,7 @@ function cellsToTSV() {
   }
   return out;
 }
+*/
 
 function ajax(func, params, callback) {
   var xmlhttp = window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
