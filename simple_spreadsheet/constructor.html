@@ -308,13 +308,26 @@ function displayCurrentRoom(currentNode,mode)
 	traverse.setAttributeNS(null,"width",100);
 	traverse.setAttributeNS(null,"height",40);
 	traverse.setAttributeNS(null,"fill",nodeColors[currentNode]);
-	traverse.setAttributeNS(null,"stroke","black");
+	
 	traverse.setAttributeNS(null,"stroke-width",2);
+
+	
 	var traverseText = document.createElementNS(xmlns,"text");
 	traverseText.setAttributeNS(null,"x",(w-480));
 	traverseText.setAttributeNS(null,"y",60);
 	traverseText.setAttributeNS(null,"font-size","25");
 	traverseText.textContent = "Traverse";
+	if(mode == 0){
+		traverse.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		traverse.setAttributeNS(null,"stroke","black");
+		traverse.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		traverse.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		traverseText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
     
 	var group2 = document.createElementNS(xmlns,"g");
 	group2.addEventListener("click",function(){generateNodesInRoom(currentNode,1)},false);
@@ -324,13 +337,24 @@ function displayCurrentRoom(currentNode,mode)
 	words.setAttributeNS(null,"width",100);
 	words.setAttributeNS(null,"height",40);
 	words.setAttributeNS(null,"fill",nodeColors[currentNode]);
-	words.setAttributeNS(null,"stroke","black");
 	words.setAttributeNS(null,"stroke-width",2);
 	var wordsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
 	wordsText.setAttributeNS(null,"x",(w-355));
 	wordsText.setAttributeNS(null,"y",60);
 	wordsText.setAttributeNS(null,"font-size","25");
 	wordsText.textContent = "Words";
+	if(mode == 1)
+	{
+		words.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		words.setAttributeNS(null,"stroke","black");
+		words.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		words.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		wordsText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
 				
 	var group = document.createElementNS(xmlns,"g");
 	group.addEventListener("click",function(){generateNodesInRoom(currentNode,2)},false);
@@ -340,13 +364,24 @@ function displayCurrentRoom(currentNode,mode)
 	colors.setAttributeNS(null,"width",100);
 	colors.setAttributeNS(null,"height",40);
 	colors.setAttributeNS(null,"fill",nodeColors[currentNode]);
-	colors.setAttributeNS(null,"stroke","black");
 	colors.setAttributeNS(null,"stroke-width",2);
 	var colorsText = document.createElementNS(xmlns,"text");  //creates the text that is linked with the other node
 	colorsText.setAttributeNS(null,"x",(w-235));
 	colorsText.setAttributeNS(null,"y",60);
 	colorsText.setAttributeNS(null,"font-size","25");
 	colorsText.textContent = "Colors";
+	if(mode == 2)
+	{
+		colors.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		colors.setAttributeNS(null,"stroke","black");
+		colors.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		colors.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		colorsText.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
 		
 	var exportGroup = document.createElementNS(xmlns, "g");
 	exportGroup.addEventListener("click", function () {exportXML()}, false);
@@ -356,13 +391,24 @@ function displayCurrentRoom(currentNode,mode)
 	exBtn.setAttributeNS(null, "width", 100);
 	exBtn.setAttributeNS(null,"height",40);
 	exBtn.setAttributeNS(null,"fill",nodeColors[currentNode]);
-	exBtn.setAttributeNS(null,"stroke","black");
 	exBtn.setAttributeNS(null,"stroke-width",2);
 	var exportTxt = document.createElementNS(xmlns, "text");
 	exportTxt.setAttributeNS(null, "x", (w-115));
 	exportTxt.setAttributeNS(null, "y", 60);
 	exportTxt.setAttributeNS(null,"font-size","25");
 	exportTxt.textContent = "Export";
+	if(mode == 3)
+	{
+		exBtn.setAttributeNS(null,"stroke","red");
+	}
+	else
+	{
+		exBtn.setAttributeNS(null,"stroke","black");
+		exBtn.setAttributeNS(null,"onmouseover","evt.target.setAttributeNS(null,'stroke','#0F0')");
+		exBtn.setAttributeNS(null,"onmouseout","evt.target.setAttributeNS(null,'stroke','black')");
+		exportTxt.setAttributeNS(null,"onmouseover","evt.target.previousSibling.setAttributeNS(null,'stroke','#0F0')");
+	}
+	
 	
 	if(objectArray[currentNode] == true)
 	{
