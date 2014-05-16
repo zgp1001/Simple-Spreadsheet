@@ -20,7 +20,7 @@
 	\**************************************************************************/
 // Translations implemented by Sophie Lee.
 var agent = navigator.userAgent.toLowerCase();
-var colorArray = new Array();
+var colorArray = new Array();  //Holds the hex values for colors in the color column 
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -410,7 +410,6 @@ function display() {
 		  style = htmlEscape(formatStyle(style,value),false);
 		  if(col == 3){
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
-			//out += "<input class = 'color {required:false}'>";
 		  }
 		  else {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
@@ -472,6 +471,7 @@ function display() {
 	}
   }
   sys.getObj("focus").focus();
+  
   for(z=0; z<colorArray.length; z++)
 	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
 }
@@ -1403,6 +1403,7 @@ function editCell(row,col,keyCode) {
   if(col == 3)  //Call JSColor for color picking
   {
 	document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = document.getElementById("colorPicker").value; //DOM MAGIC!!!
+	colorArray[row] = document.getElementById("colorPicker").value; //Update Color Array
   }
   else{
 	if (!sys.isWriteable) return;
