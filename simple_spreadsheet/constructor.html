@@ -80,14 +80,22 @@ function initalizeNodes()
 			nodeArray[x][0]= parseInt(value.substring(1,value.length));  //parses out the unecassary g and changes it to and Int
 			objectArray[x] = false;
 			
-			if(colorChoice ==0)
+			if(colorChoice ==0){
 			    nodeColors[x] = randomColor();  //gives each node it's own randomColor
-			else if(colorChoice==1)
+				console.log("Random Color");
+			}
+			else if(colorChoice==1){
 			    nodeColors[x] = choosenColor;
-			else if(colorChoice == 3) //Colors should be that of the imported graph (based on XML)
+				console.log("Choosen Color");
+			}
+			else if(colorChoice == 3){ //Colors should be that of the imported graph (based on XML)
 				nodeColors[x] = N[x].getAttribute("color");
-			else
+				console.log("Importing Colors");
+			}
+			else{
 			    nodeColors[x] = "white";
+				console.log("No Color");
+			}
 			    
 			xCords[x] = N[x].getAttribute("x");
 			yCords[x] = N[x].getAttribute("y");
@@ -168,14 +176,17 @@ function checkBoxData()
 {
 	
 	if(document.display.color[0].checked) //see what color setup the user wants
-	     colorChoice = 0;
+	    colorChoice = 0;
 	else if(document.display.color[1].checked)
 	{
-	     colorChoice =1;
-	     choosenColor = document.display.colorChoice.value;
+	    colorChoice =1;
+	    choosenColor = document.display.colorChoice.value;
 	}
-	else
-	   colorChoice = 2;
+	else if(document.display.color[2].checked)
+		colorChoice = 2;
+	else 
+		colorChoice = 3;
+	
 	for(var z=0; z < 2;z++) //get the word setup the user wants
 	{
 		if(document.display.words[z].checked)
@@ -642,7 +653,7 @@ function exportXML()
 	xmlhttp2.send("xmlGraph="+s+"&fileName="+fileName2+"");
 	*/
 		
-	var xmlWindow = window.open("","","width = 500, height = 1000");
+	var xmlWindow = window.open("","","width = 700, height = 1000");
 	var heading = xmlWindow.document.createElement("h2");
 	var xmlArea = xmlWindow.document.createElement("textarea");
 	var headingText = xmlWindow.document.createTextNode("Copy and Save Grapher XML");
@@ -682,10 +693,11 @@ function timer()
 Hello please enter in your properly formatted graph data to begin a traversal.
 </textarea>
 <table border ="1">
-<tr><td colspan="2"><input type = "radio" checked name="color" value ="3">Imported Colors<br>
+<tr><td colspan="2">
 <input type = "radio" name="color" value ="0">Random Colors<br>
 <input type ="radio" name="color" value ="1">Pick a Color<textarea id ="colorChoice" rows="2" cols="10"></textarea><br>
-<input type="radio" name="color" value="2">No Color
+<input type="radio" name="color" value="2">No Color<br>
+<input type = "radio" checked name="color" value ="3">Imported Colors<br>
 </td>
 <td><input type="radio" name="words" value="0">Random Words<br>
 <input type="radio" checked name="words">Blank nodes<br>
