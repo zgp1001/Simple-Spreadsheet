@@ -29,7 +29,7 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
-var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges");
+var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture");
   
 if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
   document.onkeydown = keypress;
@@ -38,7 +38,7 @@ if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
 sys = new function() {
   this.initData = "";
   this.autoRecalc = true;
-  this.cols = 6;
+  this.cols = 7;
   this.rows = 30;
   this.row0 = 0;
   this.col0 = 0;
