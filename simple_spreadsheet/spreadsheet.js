@@ -21,6 +21,9 @@
 // Translations implemented by Sophie Lee.
 var agent = navigator.userAgent.toLowerCase();
 var colorArray = new Array();  //Holds the hex values for colors in the color column 
+var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
+var pictureCols = new Array();
+pictureCols[0] = 6;
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -94,6 +97,31 @@ sys = new function() {
   }
 }
 
+/*
+This function performs the function of actually displaying a photo within a photo column cell 
+*/
+function displayImage(r, path)  
+{
+	var row = r;
+	var imgSource = path;
+	//Creates an HTML DOM Image item and places it within the cell's DIV tag (adds the image tag as a child of the DIV)
+	var img = document.createElement("img");
+	img.src = imgSource;
+	//Only display one photo per Picture Cell. Remove any photo already in this photo cell if there is already a photo
+	if(document.getElementById(row+"_6").childNodes[0].childNodes){
+		document.getElementById(row+"_6").childNodes[0].removeChild(document.getElementById(row+"_6").childNodes[0].childNodes[0]);
+	}
+	document.getElementById(row+"_6").childNodes[0].appendChild(img);
+	imgArray[row] = imgSource;  //1-D array update 
+	
+	//2-D array in-case a node can have multiple photos. 
+	/*
+	if(!imgArray[row])
+		imgArray[row] = new Array();
+	//Assign this photo source in its proper 2-D location 
+	imgArray[row][imgArray[row].length] = imgSource;
+	*/
+}
 function trans(key) {
   if (sys.strings[key]) return sys.strings[key]; else return "["+key+"]";
 }
@@ -472,9 +500,25 @@ function display() {
   }
   sys.getObj("focus").focus();
   
-  for(z=0; z<colorArray.length; z++)
+  for(var z=0; z<colorArray.length; z++)
 	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
-}
+	
+  for(var y = 0; y < imgArray.length; y++)
+  {
+	if(imgArray[y]){
+		displayImage(y, imgArray[y]);
+		
+		/*
+		for(var x = 0; x < imgArray[y].length; x++)
+		{
+			if(imgArray[y][x]){
+				displayImage(y, imgArray[y][x]);
+			}
+		}//end of inner loop ([][X] rotation)
+		*/
+	}//End If statement 
+  }//end of outer loop ([X][] rotation)
+}//end of display()
 
 function showHeaderFooter(show) {
   if (sys.isWriteable) return;
@@ -659,7 +703,9 @@ function loadXML(code) {
 	var newCode = "dbCells = [";
 	var x = 0; 
 	var y = 0; 
+	//Clear both tracker arrays
 	colorArray = new Array();
+	imgArray = new Array();
 	//Set up XML Parser 
 	if (window.DOMParser)
 	{
@@ -1405,7 +1451,7 @@ function editCell(row,col,keyCode) {
 	document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = document.getElementById("colorPicker").value; //DOM MAGIC!!!
 	colorArray[row] = document.getElementById("colorPicker").value; //Update Color Array
   }
-  else{
+  else if(pictureCols.indexOf(col) == -1){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
 	  
