@@ -32,6 +32,16 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
+function updateImageArray(){
+	for(var i=0; i<imgArray.length; i++)
+	{
+		if(imgArray[i] == "TBD")
+		{
+			imgArray[i] = document.getElementById(i+"_6").childNodes[0].childNodes[0].src;
+		}
+	}
+}
+
 var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture");
   
 if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
@@ -97,6 +107,12 @@ sys = new function() {
   }
 }
 
+function photoHUD(row, col)
+{
+	imgArray[row] = "TBD";
+	var w = window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0');
+}
+
 /*
 This function performs the function of actually displaying a photo within a photo column cell 
 */
@@ -107,6 +123,8 @@ function displayImage(r, path)
 	//Creates an HTML DOM Image item and places it within the cell's DIV tag (adds the image tag as a child of the DIV)
 	var img = document.createElement("img");
 	img.src = imgSource;
+	img.width = 50;
+	img.height = 50;
 	//Only display one photo per Picture Cell. Remove any photo already in this photo cell if there is already a photo
 	if(document.getElementById(row+"_6").childNodes[0].childNodes){
 		document.getElementById(row+"_6").childNodes[0].removeChild(document.getElementById(row+"_6").childNodes[0].childNodes[0]);
@@ -315,6 +333,7 @@ function goDown() {
 }
 
 function display() {
+  updateImageArray();
   sys.marks = new Array();
   sys.isMouseDown=0;
   var scrollX = 0; // keep scrolling states
@@ -438,6 +457,9 @@ function display() {
 		  style = htmlEscape(formatStyle(style,value),false);
 		  if(col == 3){
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+		  }
+		  else if(col == 6){
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+")'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
@@ -1444,6 +1466,7 @@ function gotoCell(pos) {
   }
   alert(trans("Invalid cell."));
 }
+
 function editCell(row,col,keyCode) {
   sys.active = "content";
   if(col == 3)  //Call JSColor for color picking
