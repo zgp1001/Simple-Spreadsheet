@@ -126,6 +126,15 @@ function activate(evt){
  arrow.setAttribute("transform","translate("+posx+",0)")
 }
  
+function updateColor()
+{
+	if(window.opener)
+	{
+		var row = window.opener.document.getElementById("colorPicker").value;
+		window.opener.document.getElementById(row+"_3").childNodes[0].style.backgroundColor = document.getElementById("TX").childNodes[0].nodeValue;
+		window.close();
+	}
+}
 
 ]]>
 </script>
@@ -173,7 +182,17 @@ function activate(evt){
 <g id="arrow2" onmousedown="ready(evt,2)" transform="translate(230,0)">
 <path fill="yellow" stroke="black" stroke-width="2" d="M 130 17 130 10 126 10 133 2 140 10 136 10 136 17 z" />
 </g>
-<text id="TX" x="400" y="100" font-size="30" fill="red">0</text>
+<text visibility = "hidden" id="TX" x="400" y="100" font-size="30" fill="red">#00b2ff</text>
+
+<g id = "submitBtn"> 
+	<foreignObject class="node" x="100" y="100" height="50%" width="50%">
+		<body xmlns="http://www.w3.org/1999/xhtml">
+		<input type = "button" value = "Submit" onclick = "updateColor()"/>
+		</body>
+	</foreignObject>
+</g>
+
 </svg>
+
  
  

@@ -32,12 +32,20 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
-function updateImageArray(){
+function updateArrays(){
 	for(var i=0; i<imgArray.length; i++)
 	{
 		if(imgArray[i] == "TBD")
 		{
 			imgArray[i] = document.getElementById(i+"_6").childNodes[0].childNodes[0].src;
+		}
+	}
+	
+	for(var j=0; j<colorArray.length; j++)
+	{
+		if(colorArray[j] == "TBD")
+		{
+			colorArray[j] = document.getElementById(j+"_3").childNodes[0].style.backgroundColor;
 		}
 	}
 }
@@ -107,10 +115,17 @@ sys = new function() {
   }
 }
 
+function colorHUD(row)
+{
+	colorArray[row] = "TBD";
+	document.getElementById("colorPicker").value = row;
+	var w = window.open ("color.svg", '_blank', 'toolbar=0,location=0,menubar=0,width=600,height=250');
+}
+
 function photoHUD(row, col)
 {
 	imgArray[row] = "TBD";
-	var w = window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0');
+	var w = window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0,width=1000, height=600');
 }
 
 /*
@@ -333,7 +348,7 @@ function goDown() {
 }
 
 function display() {
-  updateImageArray();
+  updateArrays();
   sys.marks = new Array();
   sys.isMouseDown=0;
   var scrollX = 0; // keep scrolling states
@@ -456,10 +471,10 @@ function display() {
 		  value = formatValue(value,style);
 		  style = htmlEscape(formatStyle(style,value),false);
 		  if(col == 3){
-			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='colorHUD("+row+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else if(col == 6){
-			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+")'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
@@ -529,7 +544,6 @@ function display() {
   {
 	if(imgArray[y]){
 		displayImage(y, imgArray[y]);
-		
 		/*
 		for(var x = 0; x < imgArray[y].length; x++)
 		{
@@ -1469,12 +1483,7 @@ function gotoCell(pos) {
 
 function editCell(row,col,keyCode) {
   sys.active = "content";
-  if(col == 3)  //Call JSColor for color picking
-  {
-	document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = document.getElementById("colorPicker").value; //DOM MAGIC!!!
-	colorArray[row] = document.getElementById("colorPicker").value; //Update Color Array
-  }
-  else if(pictureCols.indexOf(col) == -1){
+  if(pictureCols.indexOf(col) == -1 && col != 3){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
 	  

@@ -1,8 +1,11 @@
 <?php
-	$row = $_GET["row"];
-	$col = $_GET["col"];
+	if(isset($_GET["row"]))
+		$row = $_GET["row"];
+	if(isset($_GET["col"]))
+		$col = $_GET["col"];
 	$photos = new DirectoryIterator('photos/');
 	$cols = 0;
+	$rows = 8;
 	print "<script>";
 	print "function imageClicked(num){\n";
 	print "if(window.opener){\n";
@@ -16,11 +19,11 @@
 	foreach($photos as $pic){
 		if($pic != "." && $pic != "..")
 		{
-			if($cols%4 == 0){
+			if($cols%$rows == 0){
 				print "<tr>\n";
 			}
 			print "<td><img width='100' height='100' src ='photos/".$pic."' onclick='imageClicked(".$cols.")'></td>\n";
-			if($cols%4 == 3){
+			if($cols%$rows == ($rows-1)){
 				print "</tr>\n";
 			}
 			$cols++;
