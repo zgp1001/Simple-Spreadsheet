@@ -1144,13 +1144,27 @@ function removeSelectedCell() {
     var cRange = getMultiRange(sys.multiRange);
 	for (var row=cRange[0]; row<=cRange[2]; row++) {
 	  for (var col=cRange[1]; col<=cRange[3]; col++) {
-	    if (isWritable(getCellsR(row,col,1))) {
+		if(col == 3)
+		{
+			document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = "";
+			colorArray[row] = "";
+		}
+		else if(pictureCols.indexOf(col) != -1)
+		{
+			document.getElementById(row+"_"+col).childNodes[0].removeChild(document.getElementById(row+"_"+col).childNodes[0].childNodes[0]);
+			imgArray[row] = "";
+		}
+	    else if (isWritable(getCellsR(row,col,1))) {
 	      setCellsR(row,col,0,"");
 	      setCellsR(row,col,1,"");
     	  if (!sys.autoRecalc) {
 		    var obj2 = resolveCell(row,col);
 		    obj2.innerHTML = "<div>&nbsp;</div>";
-  }	} } } } else {
+		  }	
+		} 
+	  } 
+	} 
+  } else {
     removeCell(sys.currRow,sys.currCol);
     if (!sys.autoRecalc && isWritable(getCellsR(sys.currRow,sys.currCol,1))) {
       var obj2 = resolveCell(sys.currRow,sys.currCol);
