@@ -260,7 +260,7 @@ function keypress(event) {
 		}
 		scrollRight();
 		ret=false;
-	  } else if (keyCode==39 || keyCode==9) { // right
+	  } else if ((keyCode==39 || keyCode==9) && sys.currCol < 6) { // right
 	    goRight();
 		ret=false;
 	  } else if (keyCode==40) { // down
