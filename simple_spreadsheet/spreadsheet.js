@@ -32,6 +32,28 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
+function doClick() {
+    var el = document.getElementById("fileElem");
+    if (el) {
+		el.click();
+    }
+}
+
+function handleFiles(files) {
+	var row;
+	for(var i=0; i<imgArray.length; i++)
+	{
+		if(imgArray[i] == "TBD"){
+			row = i;
+		}
+	}
+    if (!files.length) {
+		imgArray[row] = "";
+    } else {
+		document.getElementById(row+"_6").childNodes[0].innerHTML = "<img width = '50' height = '50' src='"+window.URL.createObjectURL(files[files.length-1])+"'>"
+	}
+}
+	
 function updateArrays(){
 	for(var i=0; i<imgArray.length; i++)
 	{
@@ -125,7 +147,27 @@ function colorHUD(row)
 function photoHUD(row, col)
 {
 	imgArray[row] = "TBD";
-	var w = window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0,width=1000, height=600');
+	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=150');
+	w.document.body.innerHTML = "<form id='type'>\n";
+	w.document.body.innerHTML += "<input type='radio' id='local' name='photoType' value='local'>Local Photo<br>\n";
+	w.document.body.innerHTML += "<input type='radio' id='server' checked name='photoType' value='server'>Server Hosted Photo<br><br>\n";
+	w.document.body.innerHTML += "</form>\n";
+	w.document.body.innerHTML += "<input type ='button' id='loadHUD' value='Continue'>";
+	w.document.getElementById("loadHUD").onclick = function() {
+		if(w.document.getElementById("server").checked)
+		{
+			w.close();
+			window.open("http://cs.sru.edu/~gravity/Spreadsheet%20Editor/simple_spreadsheet/photos.php?row="+row+"&col="+col, '_blank', 'toolbar=0,location=0,menubar=0,width=1000, height=600');
+		}
+		else 
+		{
+			w.close();
+			var el = document.getElementById("fileElem");
+			if (el) {
+				el.click();
+			}
+		}
+	}
 }
 
 /*
@@ -473,7 +515,7 @@ function display() {
 		  if(col == 3){
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='colorHUD("+row+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else if(col == 6){
+		  else if(pictureCols.indexOf(col) != -1){
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else {
