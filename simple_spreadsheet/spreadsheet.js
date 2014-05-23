@@ -59,7 +59,11 @@ function updateArrays(){
 	{
 		if(imgArray[i] == "TBD")
 		{
-			imgArray[i] = document.getElementById(i+"_6").childNodes[0].childNodes[0].src;
+			if(document.getElementById(i+"_6").childNodes[0].childNodes[0] != "&nbsp;"){
+				imgArray[i] = document.getElementById(i+"_6").childNodes[0].childNodes[0].src;
+			}
+			else
+				imgArray[i] = "";  //No photo was placed in the cell, clear the array
 		}
 	}
 	
@@ -146,11 +150,12 @@ function colorHUD(row)
 
 function photoHUD(row, col)
 {
+	updateArrays();  //Update image array (removes any TBDs that need removed - IE user exited photo window without selecting a photo)
 	imgArray[row] = "TBD";
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=150');
 	w.document.body.innerHTML = "<form id='type'>\n";
-	w.document.body.innerHTML += "<input type='radio' id='local' name='photoType' value='local'>Local Photo<br>\n";
-	w.document.body.innerHTML += "<input type='radio' id='server' checked name='photoType' value='server'>Server Hosted Photo<br><br>\n";
+	w.document.body.innerHTML += "<input type='radio' id='local' checked name='photoType' value='local'>Local Photo<br>\n";
+	w.document.body.innerHTML += "<input type='radio' id='server' name='photoType' value='server'>Server Hosted Photo<br><br>\n";
 	w.document.body.innerHTML += "</form>\n";
 	w.document.body.innerHTML += "<input type ='button' id='loadHUD' value='Continue'>";
 	w.document.getElementById("loadHUD").onclick = function() {
