@@ -24,20 +24,55 @@ var svgns = 'http://www.w3.org/2000/svg';
 var xlinkns = 'http://www.w3.org/1999/xlink';
 arrow=new Array()
 function startup(evt){
- O=evt.target
- document=O.ownerDocument
- for (i=0;i<4;i++){
-  RA[i]=document.getElementById(RCS[i])
-  arrow[i]=document.getElementById("arrow"+i)
- }
- RR=document.getElementById("RR")
- o1=document.getElementById("o1")
- o2=document.getElementById("o2")
- o3=document.getElementById("o3")
- b2=document.getElementById("b2")
- s1=document.getElementById("s1")
- p1=(750 - 180)%360
- p3=(690 - 180)%360
+	var g = document.getElementById("submitBtn");
+	var browser = navigator.userAgent;
+	
+	if(browser.indexOf(".NET") == -1){  //Non IE browsers -> Use foreign object to create an actual HTML Button
+		var fO = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+		fO.setAttributeNS(null, 'class', 'node');
+		fO.setAttributeNS(null, 'x', '100');
+		fO.setAttributeNS(null, 'y', '100');
+		fO.setAttributeNS(null, 'height', '50%');
+		fO.setAttributeNS(null, 'width', '50%');
+		var btn = document.createElementNS('http://www.w3.org/1999/xhtml', 'input');
+		btn.setAttributeNS(null, 'type', 'button');
+		btn.setAttributeNS(null, 'value', 'Submit');
+		btn.setAttributeNS(null, 'onclick', 'updateColor()');
+		fO.appendChild(btn);
+		g.appendChild(fO);
+	}
+	else {
+		//IE code (IE does not support <foreign object>)
+		g.setAttributeNS(null, 'onclick', 'updateColor()');
+		var btn = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		btn.setAttributeNS(null, 'x', '100');
+		btn.setAttributeNS(null, 'y', '100');
+		btn.setAttributeNS(null, 'height', '50');
+		btn.setAttributeNS(null, 'width', '100');
+		btn.setAttributeNS(null,'fill','beige');
+		var txt = document.createElementNS('http://www.w3.org/2000/svg', "text");
+		txt.setAttributeNS(null, "x", '115');
+		txt.setAttributeNS(null, "y", '130');
+		txt.setAttributeNS(null,"font-size","25");
+		txt.textContent = "Submit";
+		g.appendChild(btn);
+		g.appendChild(txt);
+	}
+	
+	O=evt.target
+	document=O.ownerDocument
+	for (i=0;i<4;i++){
+		RA[i]=document.getElementById(RCS[i])
+		arrow[i]=document.getElementById("arrow"+i)
+	}
+	RR=document.getElementById("RR")
+	o1=document.getElementById("o1")
+	o2=document.getElementById("o2")
+	o3=document.getElementById("o3")
+	b2=document.getElementById("b2")
+	s1=document.getElementById("s1")
+	p1=(750 - 180)%360
+	p3=(690 - 180)%360
 }
 function HSVtoRGB(Hue,S,I){
  // H is between 0 and 360; S is between 0 and 1; I is between 0 and 1
@@ -185,11 +220,13 @@ function updateColor()
 <text visibility = "hidden" id="TX" x="400" y="100" font-size="30" fill="red">#00b2ff</text>
 
 <g id = "submitBtn"> 
+<!--
 	<foreignObject class="node" x="100" y="100" height="50%" width="50%">
 		<body xmlns="http://www.w3.org/1999/xhtml">
 		<input type = "button" value = "Submit" onclick = "updateColor()"/>
 		</body>
 	</foreignObject>
+-->
 </g>
 
 </svg>
