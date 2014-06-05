@@ -806,6 +806,12 @@ function loadXML(code) {
 	//Cycle through the nodes, collecting all information 
 	for(var i=0; i<nodes.length; i++) 
 	{
+		var pic = nodes[i].getElementsByTagName("img");
+		if(pic[0])
+		{
+			var source = pic[0].getAttribute('src');
+			displayImage(i, source);
+		}
 		x = 0;
 		newCode += "\n["+x+","+y+","+"\""+nodes[i].getAttribute('id')+"\",\"\"],";   //Store the id as: [x,y,"id",""],  --Which is the required DB format 
 		x++;
@@ -920,6 +926,7 @@ function toHex(n) {
 //Save Grapher code and any changes made to send back to the user
 function cellsToGrapher()
 {
+	updateArrays();  //Update so that any "TBD" array values will be set to their actual value before exporting 
 	var color;
 	//sys.cells[rows][cols][3 = info inside cells]
 	var out = "<graph> \n"
@@ -930,8 +937,9 @@ function cellsToGrapher()
 		color = document.getElementById(i+"_"+3).childNodes[0].style.backgroundColor;
 		color = rgbToHex(color);
 		out += " color =\"#"+color+"\"";
-		//out += " color=\""+sys.cells[i][3][3]+"\"";    //gets the color for the node
 		out += " label=\""+sys.cells[i][4][3]+"\"> \n"; //gets the label for the node
+		if(imgArray[i]) out += "<img src = \"" + imgArray[i] + "\" />\n" ;
+		//Grab edges for this node
 		tempString = sys.cells[i][5][3]; //get the comma delimted string of edges for the graph
 		edges = tempString.split(","); //split the string for each edge that is needed
 		for(var j =0; j < edges.length;j++){ //loop through and generate each edge connection for the nodes
