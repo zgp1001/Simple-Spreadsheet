@@ -32,6 +32,38 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
+//Used to edit the Edges column 
+function createLink(r) 
+{
+	posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
+	//Cycle through all rows and determine which ones have declared nodes/pages - from these, determine valid links for this node
+	//A valid link is a node which is not the same node that is passed (r) and is not already a link of the passed node 
+	for(var i=0; i < sys.cells.length; i++)
+		if(sys.cells[i]) 
+			if(sys.cells[i][0])  
+				if(i != r && sys.cells[r][5][3].indexOf(sys.cells[i][0][3]) == -1)
+					posLink[posLink.length] = sys.cells[i][0][3];
+	//Now for these links construct a pop-up to select links to add to the current page 
+	
+	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=150');
+	var htmlStr = ""; //String to be passed as innerHTML as w later
+	var boxArray = new Array(); //Array of check-boxes for the possible nodes 
+	
+	for(var i=0; i < posLink.length; i++)
+		htmlStr += "<input type='checkbox' id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
+		
+	htmlStr += "<input type='button' value='Submit' id='submitter'>";
+	w.document.body.innerHTML = htmlStr;
+	w.document.getElementById("submitter").onclick = function() { 
+		var selectedStr = ""; //String of comma delimited string of selected links
+		for(var i=0; i < posLink.length; i++)
+			if(w.document.getElementById(posLink[i]).checked)
+				selectedStr += ","+posLink[i];
+		document.getElementById(r+"_5").childNodes[0].innerHTML += selectedStr;
+		w.close();
+	}	
+}
+
 function doClick() {
     var el = document.getElementById("fileElem");
     if (el) {
@@ -517,11 +549,15 @@ function display() {
 	  	  }
 		  value = formatValue(value,style);
 		  style = htmlEscape(formatStyle(style,value),false);
-		  if(col == 3){
+		  if(col == 3){ //Color column 
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='colorHUD("+row+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else if(pictureCols.indexOf(col) != -1){
+		  else if(pictureCols.indexOf(col) != -1){ //Picture column
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
+		  }
+		  else if(col == 5) //Edges column
+		  {
+			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='createLink("+row+")'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='editCell("+row+","+col+",0);'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
@@ -1750,6 +1786,7 @@ function buildColName(num) {
     val = (Math.floor(num/26)-1)%26;
 	result += String.fromCharCode(val+65);
   }
+  //To add a new Grapher-Gravity specific Column label, just add it to the colNames array (declared globally above) 
   if(num <= colNames.length-1)
 	result += colNames[num];
   else 
