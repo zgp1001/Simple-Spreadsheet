@@ -32,25 +32,28 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
-//Used to edit the Edges column 
+//Used to edit the Edges column (add and delete links) 
 function createLink(r) 
 {
 	posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
 	//Cycle through all rows and determine which ones have declared nodes/pages - from these, determine valid links for this node
-	//A valid link is a node which is not the same node that is passed (r) and is not already a link of the passed node 
+	//A valid link is a node which is not the same node that is passed (r) 
 	for(var i=0; i < sys.cells.length; i++)
 		if(sys.cells[i]) 
 			if(sys.cells[i][0])  
-				if(i != r && sys.cells[r][5][3].indexOf(sys.cells[i][0][3]) == -1)
+				if(i != r)
 					posLink[posLink.length] = sys.cells[i][0][3];
-	//Now for these links construct a pop-up to select links to add to the current page 
-	
+					
+	//Now for these links construct a pop-up to select links to add/delete for the current page 
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
 	var htmlStr = ""; //String to be passed as innerHTML as w later
-	var boxArray = new Array(); //Array of check-boxes for the possible nodes 
+	var boxArray = new Array(); //Array of check-boxes for the possible links  
 	
 	for(var i=0; i < posLink.length; i++)  //Create a check-box for each possible node 
-		htmlStr += "<input type='checkbox' id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
+		if(sys.cells[r][5][3].indexOf(posLink[i]) != -1) //This link is already linked, check the check-box (unchecking will remove this link) 
+			htmlStr += "<input type='checkbox' checked id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
+		else //Link is not already linked to the current page. Check-box should not be checked (checking will add this link to the page) 
+			htmlStr += "<input type='checkbox' id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
 		
 	htmlStr += "<br><input type='button' value='Submit' id='submitter'>"; //Submit button for when user is finished 
 	w.document.body.innerHTML = htmlStr;  //Load the HTML into the pop-up window 
@@ -59,7 +62,7 @@ function createLink(r)
 		for(var i=0; i < posLink.length; i++)
 			if(w.document.getElementById(posLink[i]).checked)
 				selectedStr += ","+posLink[i]; 
-		sys.cells[r][5][0] += selectedStr; //Update the node 
+		sys.cells[r][5][0] = selectedStr.substr(1, selectedStr.length); //Update the node (character 1 is an unnecessary ',')
 		display();  //Update the screen 
 		w.close();  //Close pop-up 
 	}	
@@ -1580,7 +1583,7 @@ function gotoCell(pos) {
 
 function editCell(row,col,keyCode) {
   sys.active = "content";
-  if(pictureCols.indexOf(col) == -1 && col != 3){
+  if(pictureCols.indexOf(col) == -1 && col != 3 && col != 5){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
 	  
