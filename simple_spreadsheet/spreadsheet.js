@@ -22,8 +22,6 @@
 var agent = navigator.userAgent.toLowerCase();
 var colorArray = new Array();  //Holds the hex values for colors in the color column 
 var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
-var pictureCols = new Array();
-pictureCols[0] = 6;
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -35,6 +33,15 @@ window.onerror=handleErr;
 //Used to edit the Edges column (add and delete links) 
 function createLink(r) 
 {
+	if(!sys.cells[r]) 
+		return false;
+		
+	//If the edges column is blank for this node, initialize the data structure for it and set its initial value to a blank string 
+	if(!sys.cells[r][5]){
+		sys.cells[r][5] = new Array();
+		sys.cells[r][5][3] = "";
+	}
+	
 	posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
 	//Cycle through all rows and determine which ones have declared nodes/pages - from these, determine valid links for this node
 	//A valid link is a node which is not the same node that is passed (r) 
@@ -228,15 +235,7 @@ function displayImage(r, path)
 		document.getElementById(row+"_6").childNodes[0].removeChild(document.getElementById(row+"_6").childNodes[0].childNodes[0]);
 	}
 	document.getElementById(row+"_6").childNodes[0].appendChild(img);
-	imgArray[row] = imgSource;  //1-D array update 
-	
-	//2-D array in-case a node can have multiple photos. 
-	/*
-	if(!imgArray[row])
-		imgArray[row] = new Array();
-	//Assign this photo source in its proper 2-D location 
-	imgArray[row][imgArray[row].length] = imgSource;
-	*/
+	imgArray[row] = imgSource;  
 }
 function trans(key) {
   if (sys.strings[key]) return sys.strings[key]; else return "["+key+"]";
@@ -552,11 +551,11 @@ function display() {
 		    }
 	  	  }
 		  value = formatValue(value,style);
-		  style = htmlEscape(formatStyle(style,value),false);
+		  //style = htmlEscape(formatStyle(style,value),false);
 		  if(col == 3){ //Color column 
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='colorHUD("+row+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else if(pictureCols.indexOf(col) != -1){ //Picture column
+		  else if(col == 6){ //Picture column
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
 		  else if(col == 5) //Edges column
@@ -940,9 +939,6 @@ function rgbToHex(rgbColor) {
 	rgbColor = rgbColor.replace(")", "");
 	rgbColor = rgbColor.replace("rgb", "");
 	rgbColor = rgbColor.split(",");
-	//alert("RED: "+rgbColor[0]);
-	//alert("Green: "+rgbColor[1]);
-	//alert("Blue: "+rgbColor[2]);
 	return toHex(rgbColor[0])+toHex(rgbColor[1])+toHex(rgbColor[2]);
 }
 
@@ -950,8 +946,7 @@ function toHex(n) {
  n = parseInt(n,10);
  if (isNaN(n)) return "00";
  n = Math.max(0,Math.min(n,255));
- return "0123456789ABCDEF".charAt((n-n%16)/16)
-      + "0123456789ABCDEF".charAt(n%16);
+ return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
 }
 
 //Save Grapher code and any changes made to send back to the user
@@ -1235,7 +1230,7 @@ function removeSelectedCell() {
 			document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = "";
 			colorArray[row] = "";
 		}
-		else if(pictureCols.indexOf(col) != -1)
+		else if(col == 6)
 		{
 			document.getElementById(row+"_"+col).childNodes[0].removeChild(document.getElementById(row+"_"+col).childNodes[0].childNodes[0]);
 			imgArray[row] = "";
@@ -1583,7 +1578,7 @@ function gotoCell(pos) {
 
 function editCell(row,col,keyCode) {
   sys.active = "content";
-  if(pictureCols.indexOf(col) == -1 && col != 3 && col != 5){
+  if(col != 6 && col != 3 && col != 5){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
 	  
@@ -1797,14 +1792,15 @@ function colstrToColnum(col_str) {
   return col_num;
 }
 
-function formatStyle(style,value) {
+function formatStyle(style,value) { /*
   if (style.indexOf("text-align:")==-1 && value.length>0 && !isNaN((value+"").replace(/[$%,]/g,"").replace("&euro;",""))) {
     style += "; text-align:right; white-space:nowrap;";
 	if (value<0 && style.indexOf("color:")==-1) style += "color:#FF0000;";
-  }
-  return style.replace(/(format|readonly|colspan|rowspan):.*?;|expression|behavior/ig,"");
+  } 
+  return style.replace(/(format|readonly|colspan|rowspan):.*?;|expression|behavior/ig,""); */
+  return value;
 }
-function formatValue(value,style) {
+function formatValue(value,style) {/*
   if (style.indexOf("format:")!=-1) {
     if (style.indexOf("format:euro")!=-1) value = formatNumber(value)+" &euro;";
       else if (style.indexOf("format:dollar")!=-1) value = "$"+formatNumber(value);
@@ -1817,8 +1813,8 @@ function formatValue(value,style) {
       else if (style.indexOf("format:time")!=-1) value = formatTime(value);
   } else if (!isNaN(value) && value!=0) {
     value = formatNumber(value).replace(/\.00$/,"");
-  }
-  return value;
+  } */
+  return value; 
 }
 function formatDate(value) {
   if (isNaN(new Date(value).getHours())) {
