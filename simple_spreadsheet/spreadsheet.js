@@ -45,22 +45,23 @@ function createLink(r)
 					posLink[posLink.length] = sys.cells[i][0][3];
 	//Now for these links construct a pop-up to select links to add to the current page 
 	
-	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=150');
+	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
 	var htmlStr = ""; //String to be passed as innerHTML as w later
 	var boxArray = new Array(); //Array of check-boxes for the possible nodes 
 	
-	for(var i=0; i < posLink.length; i++)
+	for(var i=0; i < posLink.length; i++)  //Create a check-box for each possible node 
 		htmlStr += "<input type='checkbox' id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
 		
-	htmlStr += "<input type='button' value='Submit' id='submitter'>";
-	w.document.body.innerHTML = htmlStr;
-	w.document.getElementById("submitter").onclick = function() { 
+	htmlStr += "<br><input type='button' value='Submit' id='submitter'>"; //Submit button for when user is finished 
+	w.document.body.innerHTML = htmlStr;  //Load the HTML into the pop-up window 
+	w.document.getElementById("submitter").onclick = function() {  //Onclick function for the submit button 
 		var selectedStr = ""; //String of comma delimited string of selected links
 		for(var i=0; i < posLink.length; i++)
 			if(w.document.getElementById(posLink[i]).checked)
-				selectedStr += ","+posLink[i];
-		document.getElementById(r+"_5").childNodes[0].innerHTML += selectedStr;
-		w.close();
+				selectedStr += ","+posLink[i]; 
+		sys.cells[r][5][0] += selectedStr; //Update the node 
+		display();  //Update the screen 
+		w.close();  //Close pop-up 
 	}	
 }
 
@@ -620,23 +621,14 @@ function display() {
   }
   sys.getObj("focus").focus();
   
+  //Display colors 
   for(var z=0; z<colorArray.length; z++)
 	document.getElementById(z+"_"+3).childNodes[0].style.backgroundColor = colorArray[z];
 	
+  //Display images 
   for(var y = 0; y < imgArray.length; y++)
-  {
-	if(imgArray[y]){
+	if(imgArray[y])
 		displayImage(y, imgArray[y]);
-		/*
-		for(var x = 0; x < imgArray[y].length; x++)
-		{
-			if(imgArray[y][x]){
-				displayImage(y, imgArray[y][x]);
-			}
-		}//end of inner loop ([][X] rotation)
-		*/
-	}//End If statement 
-  }//end of outer loop ([X][] rotation)
 }//end of display()
 
 function showHeaderFooter(show) {
