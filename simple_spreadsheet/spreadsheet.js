@@ -30,6 +30,20 @@ if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
 
 window.onerror=handleErr;
 
+//Function returns true if the string can be converted to a number/float 
+function getNumeric(strNum)
+{
+	var returnVal
+	if(!isNaN(parseFloat(strNum)))
+		returnVal = parseFloat(strNum);
+	else
+	{
+		alert("Non-Numeric given in field that requires numeric, using a default value instead");
+		returnVal = 0; 
+	}
+	return returnVal;
+}
+
 //Used to edit the Edges column (add and delete links) 
 function createLink(r) 
 {
@@ -42,7 +56,7 @@ function createLink(r)
 		sys.cells[r][5][3] = "";
 	}
 	
-	posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
+	var posLink = new Array(); //Array containing all possible links for the node passed (r = row) 
 	//Cycle through all rows and determine which ones have declared nodes/pages - from these, determine valid links for this node
 	//A valid link is a node which is not the same node that is passed (r) 
 	for(var i=0; i < sys.cells.length; i++)
@@ -51,6 +65,8 @@ function createLink(r)
 				if(i != r)
 					posLink[posLink.length] = sys.cells[i][0][3];
 					
+	/*if(posLink.length == 0)
+		return false;*/   //Broke working version - look at later
 	//Now for these links construct a pop-up to select links to add/delete for the current page 
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
 	var htmlStr = ""; //String to be passed as innerHTML as w later
@@ -370,7 +386,13 @@ function keypress(event) {
       highlightRange(sys.multiRange,"cell_highlight_over");
 	}
   } else {
-	if (keyCode==13) {
+	if (keyCode==13) { //Code 13 = Enter key -> The user pressed the enter key and is done editing the current cell 
+	  //The Column is the X or Y column - ensure that the data saved into this column is a numeric number (to ensure good Grapher XML)
+	  if(sys.getObj("field").value.indexOf("X") != -1 || sys.getObj("field").value.indexOf("Y") != -1)
+	  {
+	  	sys.getObj("value").value = getNumeric(sys.getObj("value").value);
+	  }
+	  //If Column 0 is changed, update Edge columns to new value of column 0 using str_replace()
 	  saveCell();
   	  ret=false;
 	} else if (keyCode==27) {
@@ -1609,6 +1631,7 @@ function editCell(row,col,keyCode) {
 	}
   }
 }
+
 function copyCell(row,col,cRow,cCol) {
   if (!isWritable(getCellsR(cRow,cCol,1))) {
     alert(trans("Cannot edit: cell is marked as readonly."));
