@@ -22,6 +22,7 @@
 var agent = navigator.userAgent.toLowerCase();
 var colorArray = new Array();  //Holds the hex values for colors in the color column 
 var imgArray = new Array();    //Holds the location of images that are currently in the photo column 
+var oldNodeName = "";
 if (agent.indexOf("konqueror")!=-1) agent = "konqueror";
   else if (agent.indexOf("safari")!=-1) agent = "safari";
   else if (agent.indexOf("opera")!=-1) agent = "opera";
@@ -393,6 +394,25 @@ function keypress(event) {
 	  	sys.getObj("value").value = getNumeric(sys.getObj("value").value);
 	  }
 	  //If Column 0 is changed, update Edge columns to new value of column 0 using str_replace()
+	  if(sys.getObj("field").value.indexOf("Node Name") != -1)
+	  {
+	  	for(var i=0; i<sys.cells.length; i++) //For every currently active row in the spreadsheet 
+	  	{	
+	  		if(sys.cells[i])  //Ensures cells[i] and cells[i][5] exist 
+				if(sys.cells[i][5])
+				{
+					var edges = sys.cells[i][5][3];
+					edges = edges.split(",");
+					for(var j=0; j<edges.length; j++)
+					{
+						if(edges[j] == oldNodeName)
+							edges[j] = sys.getObj("value").value;
+					}
+					edges = edges.join();
+					sys.cells[i][5][0] = edges;
+				}
+	  	}
+	  }
 	  saveCell();
   	  ret=false;
 	} else if (keyCode==27) {
@@ -1600,6 +1620,8 @@ function gotoCell(pos) {
 
 function editCell(row,col,keyCode) {
   sys.active = "content";
+  if(col == 0 && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
+  	oldNodeName = sys.cells[row][col][3];
   if(col != 6 && col != 3 && col != 5){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
