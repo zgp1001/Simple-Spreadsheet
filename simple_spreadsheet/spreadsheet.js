@@ -45,6 +45,19 @@ function getNumeric(strNum)
 	return returnVal;
 }
 
+//Function takes an array of links (allLinks) and determines in the 1st parameter is contained within the array 
+function isLinked(link, allLinks)
+{
+	for(var i=0; i<allLinks.length; i++)
+	{
+		//alert("Comparing "+allLinks[i]+" to "+link);
+		if(link == allLinks[i])
+			return true;
+	}
+	//alert("Duplicate Link not found");
+	return false;
+}
+
 //Used to edit the Edges column (add and delete links) 
 function createLink(r) 
 {
@@ -71,21 +84,60 @@ function createLink(r)
 	//Now for these links construct a pop-up to select links to add/delete for the current page 
 	var w = window.open("", '_blank', 'toolbar=0,location=0,menubar=0,width=200, height=350');
 	var htmlStr = ""; //String to be passed as innerHTML as w later
-	var boxArray = new Array(); //Array of check-boxes for the possible links  
-	
+	var linkArray = sys.cells[r][5][3].split(",");  //Place the links into an array 
+
 	for(var i=0; i < posLink.length; i++)  //Create a check-box for each possible node 
-		if(sys.cells[r][5][3].indexOf(posLink[i]) != -1) //This link is already linked, check the check-box (unchecking will remove this link) 
+	{
+		if(isLinked(posLink[i], linkArray)) //Determine if the possible link is already linked from this page or not 
 			htmlStr += "<input type='checkbox' checked id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
-		else //Link is not already linked to the current page. Check-box should not be checked (checking will add this link to the page) 
+		else
 			htmlStr += "<input type='checkbox' id='"+posLink[i]+"'>"+posLink[i]+"<br>\n";
-		
+	}	
+
 	htmlStr += "<br><input type='button' value='Submit' id='submitter'>"; //Submit button for when user is finished 
 	w.document.body.innerHTML = htmlStr;  //Load the HTML into the pop-up window 
 	w.document.getElementById("submitter").onclick = function() {  //Onclick function for the submit button 
 		var selectedStr = ""; //String of comma delimited string of selected links
 		for(var i=0; i < posLink.length; i++)
-			if(w.document.getElementById(posLink[i]).checked)
+			if(w.document.getElementById(posLink[i]).checked) 
+			{
 				selectedStr += ","+posLink[i]; 
+				//Following code creates a reverse version of this link (A -> B and B -> A)
+				//Start by determing which row the link refers to 
+				for(var j=0; j<sys.cells.length; j++)
+				{
+					if(sys.cells[j]) 
+						if(sys.cells[j][0]) 
+							if(sys.cells[j][0][3] == posLink[i]) //This is the node we are looking for 
+							{
+								if(!sys.cells[j][5])  //Column 5 hasn't been initialized yet in this row. Initialize it with the link to Row r
+								{
+									sys.cells[j][5] = new Array();
+									sys.cells[j][5][0] = sys.cells[r][0][3];
+									sys.cells[j][5][3] = sys.cells[r][0][3];
+								}
+								else  //This row's 5th column (edge column) has been initialized already - probe it's content 
+								{
+									var links = sys.cells[j][5][3].split(",");  //Create an edges array 
+									//alert(sys.cells[j][5][3]+" Dup Test: "+!isLinked(posLink[i], links));
+									if(!isLinked(sys.cells[r][0][3], links)) //Determine if Row r is already an edge for the node being added to Row r
+									{
+										//Following If-Else determines structure of string to be placed into cell 
+										if(links.length > 0)  //Cell is not empty, concat this link to the end (',') is the delimeter 
+										{
+											sys.cells[j][5][0] += ","+sys.cells[r][0][3];
+											sys.cells[j][5][3] += ","+sys.cells[r][0][3];
+										}
+										else //Cell is empty, just place the link in the cell 
+										{
+											sys.cells[j][5][0] = sys.cells[r][0][3];
+											sys.cells[j][5][3] = sys.cells[r][0][3];
+										}
+									}//End If 
+								}//End else
+							}//End If for checking if this is the node to link to (sys.cells[j][0][3]==posLink[i]) 
+				}//End for through all cell rows 
+			}//End for through all Input Boxes 
 		sys.cells[r][5][0] = selectedStr.substr(1, selectedStr.length); //Update the node (character 1 is an unnecessary ',')
 		display();  //Update the screen 
 		w.close();  //Close pop-up 
