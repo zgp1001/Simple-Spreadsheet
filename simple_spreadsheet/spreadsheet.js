@@ -188,7 +188,7 @@ function updateArrays(){
 	}
 }
 
-var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture");
+var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture", "Graph Gravity");
   
 if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
   document.onkeydown = keypress;
@@ -197,7 +197,7 @@ if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
 sys = new function() {
   this.initData = "";
   this.autoRecalc = true;
-  this.cols = 7;
+  this.cols = 8;
   this.rows = 30;
   this.row0 = 0;
   this.col0 = 0;
@@ -646,13 +646,13 @@ function display() {
 	  	  }
 		  value = formatValue(value,style);
 		  //style = htmlEscape(formatStyle(style,value),false);
-		  if(col == 3){ //Color column 
+		  if(col == colNames.indexOf("Color")){ //Color column 
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='colorHUD("+row+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else if(col == 6){ //Picture column
+		  else if(col == colNames.indexOf("Picture")){ //Picture column
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='photoHUD("+row+","+col+");'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
-		  else if(col == 5) //Edges column
+		  else if(col == colNames.indexOf("Edges")) //Edges column
 		  {
 			out += "<td "+(rowSpan?"rowspan='"+rowSpan+"'":"")+" "+(colSpan?"colspan='"+colSpan+"'":"")+" id='"+row+"_"+col+"' onmousedown='mousedown("+row+","+col+");' onmouseup='mouseup();' onmouseover='buildStatus("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' onclick='mouseoverCell("+row+","+col+");' ondblclick='createLink("+row+")'><div style='"+style+"'>"+htmlEscape(value,true)+"</div>";
 		  }
@@ -1319,12 +1319,12 @@ function removeSelectedCell() {
     var cRange = getMultiRange(sys.multiRange);
 	for (var row=cRange[0]; row<=cRange[2]; row++) {
 	  for (var col=cRange[1]; col<=cRange[3]; col++) {
-		if(col == 3)
+		if(col == colNames.indexOf("Color"))
 		{
 			document.getElementById(row+"_"+col).childNodes[0].style.backgroundColor = "";
 			colorArray[row] = "";
 		}
-		else if(col == 6)
+		else if(col == colNames.indexOf("Picture"))
 		{
 			document.getElementById(row+"_"+col).childNodes[0].removeChild(document.getElementById(row+"_"+col).childNodes[0].childNodes[0]);
 			imgArray[row] = "";
@@ -1672,9 +1672,9 @@ function gotoCell(pos) {
 
 function editCell(row,col,keyCode) {
   sys.active = "content";
-  if(col == 0 && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
+  if(col == colNames.indexOf("Name") && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
   	oldNodeName = sys.cells[row][col][3];
-  if(col != 6 && col != 3 && col != 5){
+  if(col != colNames.indexOf("Picture") && col != colNames.indexOf("Color") && col != colNames.indexOf("Edges")){
 	if (!sys.isWriteable) return;
 	if (!sys.getObj("styling").disabled) cancelCell();
 	  
