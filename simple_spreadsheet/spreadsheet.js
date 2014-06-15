@@ -553,14 +553,14 @@ function display() {
 	}
     if (sys.col0-sys.cols>=0) {
       out += "<a href='#' onclick='sys.col0 -= sys.cols; sys.currCol -= sys.cols; display(); return false;'>"+trans("&lt;&lt;")+"</a> - ";
-    } else out += "&lt;&lt; - ";
-    out += "<a href='#' onclick='sys.col0 += sys.cols; sys.currCol += sys.cols; display(); return false;'>"+trans("&gt;&gt;")+"</a> - ";
+    } /*else out += "&lt;&lt; - ";
+    out += "<a href='#' onclick='sys.col0 += sys.cols; sys.currCol += sys.cols; display(); return false;'>"+trans("&gt;&gt;")+"</a> - ";*/
     if (sys.row0-sys.rows>=0) {
       out += "<a href='#' onclick='sys.row0 -= sys.rows; sys.currRow -= sys.rows; display(); return false;'>"+trans("Up")+"</a> - ";
     } else out += trans("Up")+" - ";
     out += "<a href='#' onclick='sys.row0 += sys.rows; sys.currRow += sys.rows; display(); return false;'>"+trans("Down")+"</a> -&nbsp;";
     out += "</td><td nowrap>";
-    out += "<input type='text' value='"+sys.cols+"' style='width:28px; text-align:center;' id='cols' onfocus='sys.active=\"dimensions\";' onblur='sys.active=\"content\";'> x ";
+    out += "<input type='text' readonly value='"+sys.cols+"' style='width:28px; text-align:center;background-color: #C0C0C0' id='cols' onfocus='sys.active=\"dimensions\";' onblur='sys.active=\"content\";'> x ";
     out += "<input type='text' value='"+sys.rows+"' style='width:28px; text-align:center;' id='rows' onfocus='sys.active=\"dimensions\";' onblur='sys.active=\"content\";'> - ";
   }
   out += "<input type='text' value='' title='"+trans("Position")+"' id='field' style='width:30px; text-align:center;' onfocus='sys.active=\"position\";' onblur='sys.active=\"content\";' accesskey='g'> -&nbsp;";
@@ -679,14 +679,14 @@ function display() {
   if (sys.isWriteable) {
     out += trans("Insert")+": ";
     out += "<a href='#' onclick='insertRow(); return false;'>"+trans("Row")+"</a> - ";
-    out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";
+    //out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";
     out += trans("Delete")+": ";
     out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+trans("Row")+"</a> - ";
     //out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire column ?")+"\")) deleteColumn(); return false;'>"+trans("Column")+"</a> - ";
-  }
+  } /*
   out += trans("Sort")+": ";
   out += "<a href='#' onclick='sort(1); return false;'>"+trans("asc.")+"</a> - ";
-  out += "<a href='#' onclick='sort(0); return false;'>"+trans("desc.")+"</a> - ";
+  out += "<a href='#' onclick='sort(0); return false;'>"+trans("desc.")+"</a> - ";*/
 
   if (sys.isWriteable) {
     out += "<a href='#' onclick='cutcopy(\"cut\",\"#FFDDDD\"); return false;' title='Alt-x' accesskey='x'>"+trans("Cut")+"</a> - ";
