@@ -188,7 +188,7 @@ function updateArrays(){
 	}
 }
 
-var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture", "Graph Gravity");
+var colNames = new Array("Node Name", "X", "Y", "Color", "Label", "Edges", "Picture", "Gravity Value");
   
 if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
   document.onkeydown = keypress;
@@ -197,7 +197,7 @@ if (agent=="msie" || agent=="safari") { // cursor keys only in keydown
 sys = new function() {
   this.initData = "";
   this.autoRecalc = true;
-  this.cols = 8;
+  this.cols = colNames.length;
   this.rows = 30;
   this.row0 = 0;
   this.col0 = 0;
@@ -411,7 +411,7 @@ function keypress(event) {
 		}
 		scrollRight();
 		ret=false;
-	  } else if ((keyCode==39 || keyCode==9) && sys.currCol < 6) { // right
+	  } else if ((keyCode==39 || keyCode==9) && sys.currCol < colNames.length-1) { // right
 	    goRight();
 		ret=false;
 	  } else if (keyCode==40) { // down
@@ -682,7 +682,7 @@ function display() {
     out += "<a href='#' onclick='insertColumn(); return false;'>"+trans("Column")+"</a> - ";
     out += trans("Delete")+": ";
     out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire row ?")+"\")) deleteRow(); return false;'>"+trans("Row")+"</a> - ";
-    out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire column ?")+"\")) deleteColumn(); return false;'>"+trans("Column")+"</a> - ";
+    //out += "<a href='#' onclick='if (confirm(\""+trans("Really delete entire column ?")+"\")) deleteColumn(); return false;'>"+trans("Column")+"</a> - ";
   }
   out += trans("Sort")+": ";
   out += "<a href='#' onclick='sort(1); return false;'>"+trans("asc.")+"</a> - ";
@@ -1230,15 +1230,20 @@ function deleteRow() {
     var rowCount = sys.cells.length;
     for (var i=row0; i<rowCount; i++) {
       if (sys.cells[i]) {
-		if (!sys.cells[i+1]) sys.cells[i+1] = new Array();
+		if (!sys.cells[i+1]) 
+			sys.cells[i+1] = new Array();
 		var colCount=Math.max(sys.cells[i].length,sys.cells[i+1].length);
         for (var i2=0; i2<colCount; i2++) {
-	      if (!sys.cells[i+1][i2] && sys.cells[i][i2]) sys.cells[i][i2] = "";
-	      if (!sys.cells[i+1][i2] && !sys.cells[i][i2]) continue;
-		  // TODO2 change formulas ?
+	      if (!sys.cells[i+1][i2] && sys.cells[i][i2]) 
+	      	sys.cells[i][i2] = "";
+	      if (!sys.cells[i+1][i2] && !sys.cells[i][i2]) 
+	      	continue;
 		  sys.cells[i][i2] = sys.cells[i+1][i2];
 		  sys.cells[i+1][i2] = "";
-  } } } }
+  		} //End for 
+  	  } //End if 
+  	} //End for 
+  }//End for 
   display();
 }
 function insertColumn() {
@@ -1671,39 +1676,42 @@ function gotoCell(pos) {
 }
 
 function editCell(row,col,keyCode) {
-  sys.active = "content";
-  if(col == colNames.indexOf("Name") && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
-  	oldNodeName = sys.cells[row][col][3];
-  if(col != colNames.indexOf("Picture") && col != colNames.indexOf("Color") && col != colNames.indexOf("Edges")){
-	if (!sys.isWriteable) return;
-	if (!sys.getObj("styling").disabled) cancelCell();
-	  
-	highlightCell(row,col,"cell_highlight");
-	highlightCellHeader(row,col);
-	sys.currRow = row;
-	sys.currCol = col;
-	  
-	if (isWritable(getCellsR(row,col,1))) {
-		sys.getObj("value").disabled = false;
-	}
-	sys.getObj("styling").disabled = false;
-	sys.getObj("save").disabled = false;
-	sys.getObj("cancel").disabled = false;
-	if (sys.getObj("cols")) sys.getObj("cols").disabled = true;
-	if (sys.getObj("rows")) sys.getObj("rows").disabled = true;
-	sys.getObj("field").disabled = true;
-	sys.getObj("styling").value = getCellsR(row,col,1);
-	if (keyCode > 32 && agent=="firefox" && !sys.getObj("value").disabled) {
-		sys.getObj("value").value = String.fromCharCode(keyCode);
-	} else {
-		sys.getObj("value").value = getCellsR(row,col,0);
-	}
-	if (!sys.getObj("value").disabled) {
-		sys.getObj("value").focus(); 
-	} else {
-		sys.getObj("styling").focus(); 
-	}
-  }
+	sys.active = "content";
+  	if(row >= 0){
+		if(col == colNames.indexOf("Name") && sys.cells[row] && sys.cells[row][col]) //Store the original value of the node in oldNodeName variable 
+	  		oldNodeName = sys.cells[row][col][3];
+	  	if(col != colNames.indexOf("Picture") && col != colNames.indexOf("Color") && col != colNames.indexOf("Edges"))
+	  	{
+			if (!sys.isWriteable) return;
+			if (!sys.getObj("styling").disabled) cancelCell();
+		  
+			highlightCell(row,col,"cell_highlight");
+			highlightCellHeader(row,col);
+			sys.currRow = row;
+			sys.currCol = col;
+		  
+			if (isWritable(getCellsR(row,col,1))) {
+				sys.getObj("value").disabled = false;
+			}
+			sys.getObj("styling").disabled = false;
+			sys.getObj("save").disabled = false;
+			sys.getObj("cancel").disabled = false;
+			if (sys.getObj("cols")) sys.getObj("cols").disabled = true;
+			if (sys.getObj("rows")) sys.getObj("rows").disabled = true;
+			sys.getObj("field").disabled = true;
+			sys.getObj("styling").value = getCellsR(row,col,1);
+			if (keyCode > 32 && agent=="firefox" && !sys.getObj("value").disabled) {
+				sys.getObj("value").value = String.fromCharCode(keyCode);
+			} else {
+				sys.getObj("value").value = getCellsR(row,col,0);
+			}
+			if (!sys.getObj("value").disabled) {
+				sys.getObj("value").focus(); 
+			} else {
+				sys.getObj("styling").focus(); 
+			}
+	  	}
+  	}
 }
 
 function copyCell(row,col,cRow,cCol) {
@@ -1861,18 +1869,8 @@ function handleErr(msg,url,l) {
   return true;
 }
 
-// convert 26 to AA, 0 to A
 function buildColName(num) {
-  var val = "";
-  var result = "";
-  if (num>=702) {
-    val = (Math.floor(num/676)-1)%26;
-	result += String.fromCharCode(val+65);
-  }
-  if (num>=26) {
-    val = (Math.floor(num/26)-1)%26;
-	result += String.fromCharCode(val+65);
-  }
+  var result = ""; 
   //To add a new Grapher-Gravity specific Column label, just add it to the colNames array (declared globally above) 
   if(num <= colNames.length-1)
 	result += colNames[num];
